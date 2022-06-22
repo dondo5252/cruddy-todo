@@ -25,11 +25,33 @@ exports.create = (text, callback) => {
   });
 };
 
+
+/*
+    _.map([collection of texts], function(eachText, id) {
+
+    } )
+*/
 exports.readAll = (callback) => {
   var data = _.map(items, (text, id) => {
     return { id, text };
   });
-  callback(null, data);
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err) {
+      console.log('uh oh');
+    } else {
+      var mapped = _.map(files, (id) => {
+        id = path.basename(id, '.txt');
+        var obj = {};
+        obj.id = id;
+        obj.text = id;
+        return obj;
+      });
+
+      callback(null, mapped);
+    }
+  });
+
+
 };
 
 exports.readOne = (id, callback) => {
@@ -71,3 +93,22 @@ exports.initialize = () => {
     fs.mkdirSync(exports.dataDir);
   }
 };
+
+
+// fs.readdir(exports.dataDir, (err, files) => {
+//   if (err) {
+//     console.log('uh oh');
+//   } else {
+//     var mapped = _.map(files, (id) => {
+//       return fs.readFile(exports.dataDir + '/' + id, 'utf8', (err, data) => {
+//         if (err) {
+//           console.log('err');
+//         } else {
+//           return data;
+//         }
+//       });
+//       console.log('mapppped', mapped);
+//       callback(null, mapped);
+//     });
+//   }
+// });
