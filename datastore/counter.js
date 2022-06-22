@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs');//file system
 const path = require('path');
 const sprintf = require('sprintf-js').sprintf;
 
@@ -38,9 +38,22 @@ const writeCounter = (count, callback) => {
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
-  counter = counter + 1;
-  return zeroPaddedNumber(counter);
+exports.getNextUniqueId = (cb) => {
+  // read
+  // add 1
+  // write to hard drive
+  readCounter((err, counter) => {
+    counter = counter + 1;
+    writeCounter(counter, (err, id) => {
+      cb(err, id);
+    });
+  });
+  // exports.getNextUniqueId = () => {
+  //   counter = counter + 1;
+  //   return zeroPaddedNumber(counter);
+  //   //writecounter counter+1,
+
+  // };
 };
 
 

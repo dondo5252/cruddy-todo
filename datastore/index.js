@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs');// Read files Create files Update files Delete files Rename files
 const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
@@ -8,9 +8,21 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  //rewrite this function to us file-system module
+  //and save things permanetly as opped to just in memory
+  var id = counter.getNextUniqueId((err, id) => {
+    if (err) {
+      console.log('err');
+    } else {
+      fs.writeFile(exports.dataDir + '/' + id + '.txt', text, (err) => {
+        if (err) {
+          throw ('error writing counter');
+        } else {
+          callback(null, {id, text});
+        }
+      });
+    } // end of fs.writeFile
+  });
 };
 
 exports.readAll = (callback) => {
