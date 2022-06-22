@@ -60,28 +60,44 @@ exports.readOne = (id, callback) => {
   //   callback(null, { id, text });
   // }
   fs.readFile(exports.dataDir + '/' + id + '.txt', 'utf8', (err, data) => {
-    console.log('idddddd', id);
-    console.log(data);
     if (err) {
       callback(new Error('Sorry not found'));
     } else {
       var obj = {};
       obj.id = id;
       obj.text = data;
-      console.log('obj ------', obj);
       callback(null, obj);
     }
   });
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  // var item = items[id];
+  // if (!item) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   items[id] = text;
+  //   callback(null, { id, text });
+  // }
+
+  fs.exists(exports.dataDir + '/' + id + '.txt', (exists) => {
+    if (exists) {
+      fs.writeFile(exports.dataDir + '/' + id + '.txt', text, (err) => {
+        if (err) {
+          callback(new Error(`No item with id: ${id}`));
+        } else {
+          if (id) {
+            var obj = {};
+            obj.id = id;
+            obj.text = text;
+            callback(null, obj);
+          }
+        }
+      });
+    } else {
+      callback(new Error('Does not exist, Error'));
+    }
+  });
 };
 
 exports.delete = (id, callback) => {
@@ -106,20 +122,4 @@ exports.initialize = () => {
 };
 
 
-// fs.readdir(exports.dataDir, (err, files) => {
-//   if (err) {
-//     console.log('uh oh');
-//   } else {
-//     var mapped = _.map(files, (id) => {
-//       return fs.readFile(exports.dataDir + '/' + id, 'utf8', (err, data) => {
-//         if (err) {
-//           console.log('err');
-//         } else {
-//           return data;
-//         }
-//       });
-//       console.log('mapppped', mapped);
-//       callback(null, mapped);
-//     });
-//   }
-// });
+
